@@ -1,0 +1,476 @@
+/* ===================================================
+   NexCall — Global Design System
+   3D Glassmorphism Video Call App
+=================================================== */
+
+/* --- Design Tokens --- */
+:root {
+  /* Colors */
+  --bg-dark: #060612;
+  --bg-darker: #02020a;
+  --bg-surface: rgba(255,255,255,0.04);
+  --bg-surface-hover: rgba(255,255,255,0.07);
+  --bg-glass: rgba(10,8,30,0.65);
+  --bg-glass-light: rgba(255,255,255,0.06);
+
+  --accent-purple: #7c3aed;
+  --accent-purple-light: #9d5af5;
+  --accent-cyan: #06b6d4;
+  --accent-cyan-light: #22d3ee;
+  --accent-violet: #8b5cf6;
+  --accent-pink: #ec4899;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --accent-orange: #f59e0b;
+
+  --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  --gradient-glow: linear-gradient(135deg, #7c3aed40 0%, #06b6d440 100%);
+  --gradient-text: linear-gradient(135deg, #a78bfa 0%, #22d3ee 100%);
+  --gradient-card: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(6,182,212,0.10) 100%);
+
+  --text-primary: #f0efff;
+  --text-secondary: rgba(240,239,255,0.65);
+  --text-muted: rgba(240,239,255,0.35);
+  --text-accent: #a78bfa;
+
+  /* Glass */
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-border-hover: rgba(160,130,255,0.4);
+  --glass-glow: 0 0 30px rgba(124,58,237,0.2);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.1);
+
+  /* 3D */
+  --perspective: 1200px;
+  --tilt-amount: 10deg;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Animation */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 250ms;
+  --dur-slow: 400ms;
+
+  /* Z-index layers */
+  --z-bg: -1;
+  --z-content: 1;
+  --z-panel: 100;
+  --z-controls: 200;
+  --z-topbar: 300;
+  --z-toast: 1000;
+}
+
+/* --- Reset --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Views / Router --- */
+.view {
+  display: none;
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+}
+
+.view.active {
+  display: block;
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--gradient-primary);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 22px;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--dur-normal) var(--ease-spring);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background var(--dur-fast);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(124,58,237,0.6);
+}
+
+.btn-primary:hover::before {
+  background: rgba(255,255,255,0.1);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-primary.btn-xl {
+  font-size: 1.05rem;
+  padding: 14px 32px;
+}
+
+.btn-primary.btn-lg {
+  font-size: 1rem;
+  padding: 12px 28px;
+}
+
+.btn-primary.btn-sm {
+  font-size: 0.8rem;
+  padding: 6px 14px;
+}
+
+.btn-primary.btn-full {
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 22px;
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--dur-normal) var(--ease-smooth);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.btn-outline:hover {
+  border-color: var(--glass-border-hover);
+  background: var(--bg-surface);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.2);
+}
+
+.btn-outline.btn-xl {
+  font-size: 1.05rem;
+  padding: 14px 32px;
+}
+
+.btn-outline.btn-sm {
+  font-size: 0.82rem;
+  padding: 7px 16px;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--dur-fast);
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+/* --- Glass Components --- */
+.glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-btn {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+}
+
+.glass-btn:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: var(--glass-border-hover);
+  transform: translateY(-1px);
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.icon-btn.sm {
+  width: 32px;
+  height: 32px;
+  font-size: 0.95rem;
+}
+
+/* --- Form Elements --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--space-md);
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.neo-input {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  width: 100%;
+  outline: none;
+  transition: all var(--dur-normal) var(--ease-smooth);
+  backdrop-filter: blur(8px);
+}
+
+.neo-input:focus {
+  border-color: var(--accent-purple);
+  background: rgba(124,58,237,0.08);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+}
+
+.neo-input::placeholder {
+  color: var(--text-muted);
+}
+
+.neo-input.sm {
+  padding: 9px 12px;
+  font-size: 0.88rem;
+}
+
+/* --- Orbs --- */
+.orb {
+  position: fixed;
+  border-radius: var(--radius-full);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: var(--z-bg);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%);
+  top: -150px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+  bottom: -100px;
+  right: -80px;
+  animation-delay: -3s;
+}
+
+.orb-3 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%);
+  top: 40%;
+  right: 20%;
+  animation-delay: -6s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  33% { transform: translateY(-30px) scale(1.05); }
+  66% { transform: translateY(20px) scale(0.95); }
+}
+
+/* --- Toast Notifications --- */
+.toast-container {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: toastIn 0.35s var(--ease-spring) forwards;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast.success { border-color: rgba(16,185,129,0.4); }
+.toast.error { border-color: rgba(239,68,68,0.4); }
+.toast.info { border-color: rgba(124,58,237,0.4); }
+
+.toast.removing {
+  animation: toastOut 0.25s var(--ease-smooth) forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translateY(-12px) scale(0.9); }
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* --- Selection --- */
+::selection {
+  background: rgba(124,58,237,0.4);
+  color: white;
+}
+
+/* === MOBILE GLOBAL RESPONSIVE === */
+
+/* Safer tap areas */
+button, a, label {
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  /* Toast closer to bottom nav on mobile */
+  .toast-container {
+    bottom: 90px;
+    width: calc(100vw - 32px);
+    max-width: 360px;
+  }
+
+  .toast {
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    padding: 9px 16px;
+  }
+
+  /* Smaller orbs on mobile to reduce paint cost */
+  .orb-1 { width: 280px; height: 280px; }
+  .orb-2 { width: 220px; height: 220px; }
+  .orb-3 { width: 180px; height: 180px; }
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    bottom: 76px;
+  }
+
+  .orb-1 { width: 200px; height: 200px; }
+  .orb-2 { width: 160px; height: 160px; }
+  .orb-3 { display: none; }
+}
